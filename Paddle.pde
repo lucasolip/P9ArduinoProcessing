@@ -15,6 +15,17 @@ class Paddle {
     edges();
   }
   
+  void sensorUpdate() {
+    String inValue;
+    int currentValue;
+    int maxValue = height;
+    inValue = myPort.readStringUntil('\n');
+    if (null != inValue) currentValue = Integer.parseInt(inValue.substring(0,inValue.length()-2));
+    else currentValue = maxValue/2;
+    float sensorPosition = map(currentValue, 0, maxValue, 0, height - h);
+    position.y = lerp(position.y, sensorPosition, 0.1);
+  }
+  
   void display() {
     rect(position.x, position.y, w, h);
   }

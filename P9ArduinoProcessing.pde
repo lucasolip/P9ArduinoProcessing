@@ -1,4 +1,5 @@
 import processing.sound.*;
+import processing.serial.*;
 
 Ball ball;
 Paddle player1, player2;
@@ -11,9 +12,13 @@ String fontPath = "media/FFFFORWA.TTF";
 int gameRunning = 0;
 long lastHit = 0;
 long handicapTime = 1000;
+Serial myPort;
 
 void setup() {
   size(720, 512);
+  
+  String portName = Serial.list()[0]; //change the 0 to a 1 or 2 etc. to match your port
+  myPort = new Serial(this, portName, 9600);
   
   wsKeysSprite = loadImage("media/ws.png");
   arrowKeysSprite = loadImage("media/arrows.png");
@@ -65,9 +70,8 @@ void draw() {
     text(scorePlayer1, width/4, height/4);
     text(scorePlayer2, 3*width/4, height/4);
     
-    if (keyPressed) {
-      playerControl();
-    }
+    player1.sensorUpdate();
+    if (keyPressed) playerControl();
     
     // Physics
     if (ball.collidesWithPlayer(player1)) {
@@ -115,11 +119,6 @@ void endgame(String text1, String text2) {
 }
 
 void playerControl() {
-  if (keys[0]) {
-    player1.update(-1);
-  } else if (keys[1]) {
-    player1.update(1);
-  }
   if (keys[2]) {
     player2.update(-1);
   } else if (keys[3]) {
